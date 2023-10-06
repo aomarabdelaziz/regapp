@@ -1,13 +1,30 @@
 pipeline {
+    agent {
+        label 'docker'
+    }
     tools {
-        mvn 'mvn-3.8.5'
+        maven 'mvn-3.8.5'
     }
     stages {
-        stage('clean stage') {
-            mvn -B clean
+        stage('Clean Stage') {
+            steps {
+                //git url: "https://github.com/aomarabdelaziz/regapp.git"
+                sh 'mvn clean'
+            }
         }
-        stage('install stage') {
-            mvn -B install
+        stage('Install Stage') {
+            steps {
+                sh 'mvn install'
+            }
+        }
+        stage('Building and Pushing Image') {
+            steps {
+                sh "docker build -t abdelazizomar/regapp:${BUILD_NUMBER} ."
+                withCredentials([usernamePassword(credentialsId: 'docker-login', passwordVariable: 'PASS', usernameVariable: 'USER')]) {
+                    sh "echo $PASS | docker login -u $USER --password-stdin"
+                    sh "docker push abdelazizomar/regapp:${BUILD_NUMBER}"
+                }
+            }
         }
     }
 }
