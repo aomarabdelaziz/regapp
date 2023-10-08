@@ -29,10 +29,7 @@ pipeline {
         stage('Deploy to k8s') {
             steps {
                 withCredentials([sshUserPrivateKey(credentialsId: 'bootstrap-server', keyFileVariable: 'keyfile', usernameVariable: 'USER')]) {
-                    sshagent(['bootstrap-server-key']) {
-                    sh "ssh -o StrictHostKeyChecking=no $USER@54.87.22.203 kubectl set image deployment/regapp regapp-container=abdelazizomar/regapp:${BUILD_NUMBER}"
-
-                    }
+                    sh "ssh -o StrictHostKeyChecking=no -i $keyfile $USER@54.87.22.203 kubectl set image deployment/regapp regapp-container=abdelazizomar/regapp:${BUILD_NUMBER}"
                 }
             }
         }
