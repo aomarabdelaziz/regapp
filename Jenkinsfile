@@ -29,7 +29,7 @@ pipeline {
         stage('Deploy to k8s') {
             steps {
                 withCredentials([sshUserPrivateKey(credentialsId: 'bootstrap-server', keyFileVariable: 'keyfile', usernameVariable: 'USER')]) {
-                    sh "ssh -i $keyfile $USER@54.87.22.203 ls"
+                    sh "ssh -i -o StrictHostKeyChecking=no $keyfile $USER@54.87.22.203 ls"
                 }
             }
         }
