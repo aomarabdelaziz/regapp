@@ -1,6 +1,6 @@
 pipeline {
     agent {
-        label 'docker'
+        label 'docker-agent'
     }
     tools {
         maven 'mvn-3.8.5'
