@@ -17,12 +17,19 @@ pipeline {
                 sh 'mvn install'
             }
         }
-        stage('Building and Pushing Image') {
+        // stage('Building and Pushing Image') {
+        //     steps {
+        //         sh "docker build -t abdelazizomar/regapp:${BUILD_NUMBER} ."
+        //         withCredentials([usernamePassword(credentialsId: 'docker-login', passwordVariable: 'PASS', usernameVariable: 'USER')]) {
+        //             sh "echo $PASS | docker login -u $USER --password-stdin"
+        //             sh "docker push abdelazizomar/regapp:${BUILD_NUMBER}"
+        //         }
+        //     }
+        // }
+        stage('Deploy to k8s') {
             steps {
-                sh "docker build -t abdelazizomar/regapp:${BUILD_NUMBER} ."
-                withCredentials([usernamePassword(credentialsId: 'docker-login', passwordVariable: 'PASS', usernameVariable: 'USER')]) {
-                    sh "echo $PASS | docker login -u $USER --password-stdin"
-                    sh "docker push abdelazizomar/regapp:${BUILD_NUMBER}"
+                withCredentials([sshUserPrivateKey(credentialsId: 'bootstrap-server', keyFileVariable: 'keyfile', usernameVariable: 'USER')]) {
+                    sh "ssh -i $keyfile $USER@54.87.22.203 ls"
                 }
             }
         }
